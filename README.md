@@ -33,11 +33,11 @@ Using the airmon-ng network attack libraries I setup a network adapter in monito
 
 - Export the data to CSV and import the 2 millions entries into a Pandas dataframe in the [Data Pre-Processing Notebook]( https://github.com/Charm-q/AI-Capstone/blob/main/Data%20Pre-Processing.ipynb). 
 
-![alt text](images/info.png)
+![alt text](img/info.png)
 
 - Inside the Pre-Processing notebook obfuscation of the unique MAC addresses is done privacy reasons.
 
-![alt text](images/obfuscation.png)
+![alt text](img/obfuscation.png)
 
 - Devices on a local network communicate to each other automatically, this is not interesting data. Any entries with both the `Source address` and `Receiver address` belonging to our `targets` device list are filtered out.
 
@@ -45,7 +45,7 @@ Using the airmon-ng network attack libraries I setup a network adapter in monito
 
 - Network frames are relatively small in size. A streaming service such as Netflix or Youtube will result in far more frames than something like Facebook or Reddit, even if the user spent more time on the latter. This skews the data but can be filtered out using the `Info` column. A `Client Hello` as the frame descriptor signifies a new connection to that domain. Filtering for it will give a better representation of the user's activity.
 
-![alt text](images/client_hello.png)
+![alt text](img/client_hello.png)
 
 - Drop unwanted columns that are leftover from Wireshark:
         -`No.` is the Wireshark index and not useful.
@@ -55,20 +55,20 @@ Using the airmon-ng network attack libraries I setup a network adapter in monito
         - `Source` is the FQDN of the user's device and is not constant. Only the MAC address listed in `Source address` is constant and useful.
         - `Length` could be useful, but since the data was filtered for only identical `Client Hello` frames then it becomes trivial.
 
-![alt text](images/unwanted.png)
+![alt text](img/unwanted.png)
 
 - The `Time` column refers to how long it has been since the network capture was started. Since the network capture was started on Wed Feb 1st, 2023 at 17:04.20 EST, it can be replaced by two separate and more useful columns. Namely the day of the week and the general time of day.
 
-![alt text](images/timeofday.png)
+![alt text](img/timeofday.png)
 
 - This concludes the data preprocessing. From around 2 millions entries, the data has been narrowed down to 1 thousand informative entries.
 
-![alt text](images/preprocessed.png)
+![alt text](img/preprocessed.png)
 
 
-- In the Network Fingerprint AI Model[LINk!!!!] notebook the previously preprocessed data will be trained and fit to several models. The data needs to be One-Hot-Encoded first. This entails creating a separate column for each unique entry into the feature columns. This is necessary since the AI models train on numbers and not words.
+- In the [Network Fingerprint AI Model notebook]( https://github.com/Charm-q/AI-Capstone/blob/main//Network%20Fingerprint%20AI%20Model.ipynb) the previously preprocessed data will be trained and fit to several models. The data needs to be One-Hot-Encoded first. This entails creating a separate column for each unique entry into the feature columns. This is necessary since the AI models train on numbers and not words.
 
-![alt text](images/onehot.png)
+![alt text](img/onehot.png)
 
 
 - Two models will be used to learn the users habits. The [Support Vector Machine]( https://en.wikipedia.org/wiki/Support_vector_machine) needs to be used as it is very compatible for this classification. SVC essentially draws a line between points on a multidimensional graph. Since users tend to use the same websites at the same time of day, this is an excellent way of differentiating between the them. There will of course be some overlap so getting a perfect training and test score is impossible.
@@ -81,11 +81,11 @@ Using the airmon-ng network attack libraries I setup a network adapter in monito
 
 The SVC train accuracy was ~92%, our SVC test accuracy was ~83%. Our best parameters are {'svc__coef0': 0, 'svc__gamma': 0.1, 'svc__kernel': 'linear'}. 
 
-![alt text](images/svc.png)
+![alt text](img/svc.png)
 
 The Neural Net using the MPLClassifer had a very similar test accuracy of ~83.
 
-![alt text](images/net.png)
+![alt text](img/net.png)
 
 The results show that to an accuracy of 83% it is possible to differentiate between only two different people using only their encrypted TCP network data. The overlap from accessing big websites such as Google makes it impossible to get a perfect score. Since both models had very similar results then either one can be used for this task. However, scaling this up to many many people should prove a lot more technically challenging and one of the models will very likely be much more time consuming than the other.
 
