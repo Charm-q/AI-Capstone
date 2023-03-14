@@ -22,7 +22,21 @@ The ability to fingerprint an individual based on their network activity is some
 Can an AI model be trained to distinguish between two individuals on four separate devices using only their encrypted TCP network activity?
 
 #### Data Sources
-Data was acquired over a month using the [airmon-ng]( https://www.aircrack-ng.org/doku.php?id=airmon-ng) network attack libraries with a network adapter in monitor mode that captured all the data in the users' household.
+Data was acquired over a month using the [airmon-ng]( https://www.aircrack-ng.org/doku.php?id=airmon-ng) network attack libraries with a network adapter in monitor mode that captured all the data in the users' household. 
+
+#### Dataset Breakdown
+
+Each entry in the dataset is a network frame with only the high level details.
+
+- `No.` is a leftover index from Wireshark.
+- `Time` represents the time since the network capture started.
+- `Source` represent the FQDN or domain of whoever is sending a network frame.
+- `Destination` represents the FQDN or domain of the intended receiver.
+- `Protocol` represents the protocol used to send the network frame.
+- `Length` represents the size in bytes if the network frame.
+- `Receiver address` represents the unique MAC address of the intended receiver.
+- `Source address` represents the MAC address of the frame sender.
+- `Info` includes a short description of the network frame's objective.
 
 #### Methodology
 - Capture a months worth of network activity of the household with a Linux security tool called airmon-ng. The custom script used to complete this capture is included [here]( https://github.com/Charm-q/AI-Capstone/blob/main/month-capture.sh).
